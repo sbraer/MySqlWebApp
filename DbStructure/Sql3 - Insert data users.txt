@@ -1,0 +1,31 @@
+﻿--
+-- Dumping data for table `AspNetRoles`
+--
+
+LOCK TABLES `AspNetRoles` WRITE;
+/*!40000 ALTER TABLE `AspNetRoles` DISABLE KEYS */;
+INSERT INTO `AspNetRoles` VALUES ('825533a0-7884-4acf-a504-dd4b593fb4bb','Admin','ADMIN'),('d7ec921d-799d-4450-9c56-f8c1457d2ef6','Users','USERS');
+/*!40000 ALTER TABLE `AspNetRoles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `AspNetUsers`
+--
+
+LOCK TABLES `AspNetUsers` WRITE;
+/*!40000 ALTER TABLE `AspNetUsers` DISABLE KEYS */;
+INSERT INTO `AspNetUsers` VALUES ('1e0dbca8-6ac0-4b1e-931f-d2ffe4870700','a1@a1.it','A1@A1.IT','a1@a1.it','A1@A1.IT','AQAAAAEAACcQAAAAEHfduzIYVyurSl/vT6u+LuBWS6kvwYIVaeDPl+HT9rL8n7kAEoejTkgjZdTAqygf4g=='),('b92173cf-f3d7-45e1-8cd3-ccfa4ab26976','b1@b1.it','B1@B1.IT','b1@b1.it','B1@B1.IT','AQAAAAEAACcQAAAAEOn1vMSnbZMRiwVuqjLMeruoFoy9DIs67USuOaWOWxQAPFDLUfHRpNxQZDtCZsgv4w==');
+/*!40000 ALTER TABLE `AspNetUsers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+--
+-- Dumping data for table `AspNetUserRoles`
+--
+
+LOCK TABLES `AspNetUserRoles` WRITE;
+/*!40000 ALTER TABLE `AspNetUserRoles` DISABLE KEYS */;
+INSERT INTO `AspNetUserRoles` VALUES ('1e0dbca8-6ac0-4b1e-931f-d2ffe4870700','825533a0-7884-4acf-a504-dd4b593fb4bb'),('1e0dbca8-6ac0-4b1e-931f-d2ffe4870700','d7ec921d-799d-4450-9c56-f8c1457d2ef6'),('b92173cf-f3d7-45e1-8cd3-ccfa4ab26976','d7ec921d-799d-4450-9c56-f8c1457d2ef6');
+/*!40000 ALTER TABLE `AspNetUserRoles` ENABLE KEYS */;
+UNLOCK TABLES;
+

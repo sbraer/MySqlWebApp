@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.0.22" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Configuration\Configuration.csproj" />
+    <ProjectReference Include="..\Entities\Entities.csproj" />
+    <ProjectReference Include="..\MySqlIdentityModel\MySqlIdentityModel.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp
+spec:
+  selector:
+    app: webapp
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+    #nodePort: 30000
+  #type: NodePort #LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+  labels:
+    app: webapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: sbraer/mysqlwebapp:v1
+        imagePullPolicy: IfNotPresent #Always
+        env:
+        - name: MySqlServerName
+          value: mysql-0.mysql
+        - name: MySqlDatabaseName
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: databaseName
+        - name: MySqlUsernameFile
+          value: /etc/secret-volume/username
+        - name: MySqlPasswordFile
+          value: /etc/secret-volume/password
+        - name: MySqlServerNameReader
+          value: mysql-read
+        - name: MySqlDatabaseNameReader
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: databaseName
+        - name: MySqlUsernameReaderFile
+          value: /etc/secret-volume/username
+        - name: MySqlPasswordReaderFile
+          value: /etc/secret-volume/password
+        #- name: API_PATH_BASE # use this in ingress when map this app in subfolder
+        #  value: "subpath"
+        volumeMounts:
+        - name: secretvolume
+          readOnly: true
+          mountPath: "/etc/secret-volume"
+      volumes:
+      - name: conf
+        emptyDir: {}
+      - name: config-map
+        configMap:
+          name: mysql
+      - name: secretvolume
+        secret:
+          secretName: mysecret

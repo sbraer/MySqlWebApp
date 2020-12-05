@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: myingress
+spec:
+    rules:
+    - host: nb-172-104-255-235.frankfurt.nodebalancer.linode.com
+      http:
+        paths:
+        - backend:
+            serviceName: webapp
+            servicePort: 5000
+          path: /

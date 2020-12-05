@@ -1,0 +1,49 @@
+﻿@page "{IdArticle?}"
+@model WebApp.Pages.NewArticle
+
+
+@if (string.IsNullOrEmpty(Model.Message))
+{
+	<h2>Edit</h2>
+
+	<form method="post">
+		<div asp-validation-summary="All">
+			<span>Please correct the following errors</span>
+		</div>
+
+		<div>
+			<span>Title</span>
+			<input asp-for="ArticleTitle" />
+
+			<span>Author</span>
+			<input asp-for="ArticleName" />
+		</div>
+		<div style="margin-top:1em">
+			<textarea asp-for="ArticleText" rows="20" style="margin-right:auto;margin-left:auto;width:90%;"></textarea>
+		</div>
+		<div>
+			<input type="submit">
+			@if (Model.IdArticle.HasValue)
+			{
+				// <a href="/Article/@(Uri.EscapeDataString(Model.IdArticle.Value.ToString()))">Cancel</a>
+				<a href="/Article/@(Model.IdArticle)">Cancel</a>
+			}
+			else
+			{
+				<a href="/Articles">Cancel</a>
+			}
+			<br />
+			<span asp-validation-for="ArticleTitle" class="text-danger"></span>
+			<br />
+			<span asp-validation-for="ArticleName" class="text-danger"></span>
+		</div>
+	</form>
+}
+else
+{
+	<h3>Error: @Model.Message</h3>
+}
+
+@section scripts{
+	<partial name="_ValidationScriptsPartial" />
+}

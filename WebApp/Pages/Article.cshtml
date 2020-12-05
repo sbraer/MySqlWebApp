@@ -1,0 +1,31 @@
+﻿@page "{IdArticle}"
+@model WebApp.Pages.ArticleModel
+@functions {
+	public string FormatRawText(string text)
+	{
+		if (string.IsNullOrEmpty(text))
+		{
+			return "-";
+		}
+		else
+		{
+			return text.Replace("\n", "<br />");
+		}
+	}
+}
+@if (Model.Article != null)
+{
+<h2>
+	@Model.Article.Title
+	@if (@User.IsInRole("ADMIN"))
+	{
+		<span>(<a href="/NewArticle/@(Model.IdArticle)">Edit Article</a>)</span>
+	}
+</h2>
+	<h3>@Model.Article.Name</h3>
+	<p>@Html.Raw(FormatRawText(@Model.Article.ArticleText))</p>
+}
+else
+{
+	<h3>Error: @Model.Message</h3>
+}

@@ -1,0 +1,59 @@
+﻿@page
+@model WebApp.Pages.ArticlesList
+@{
+}
+<div>
+	<h1>Articles</h1>
+	@if (Model.Message != null)
+	{
+		<div><h3>Error: @Model.Message</h3></div>
+	}
+	else
+	{
+		<h4>
+			List of articles @if (@User.IsInRole("ADMIN"))
+			{
+				<span>(<a href = "NewArticle">New Article</a>)</span>
+			}
+		</h4>
+		@if (Model.Articles == null)
+		{
+			<h4>No articles from db</h4>
+		}
+		else
+		{
+			<table border="1" width="500px">
+				<thead>
+					<tr>
+						<th></th>
+						<th></th>
+						<th>Name</th>
+						<th>Title</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var item in Model.Articles)
+					{
+						<tr>
+							<td>
+								<a href="Article/@item.Id">Link</a>
+							</td>
+							<td>
+								@if (@User.IsInRole("ADMIN"))
+								{
+									<a href="NewArticle/@item.Id">Edit</a>
+								}
+								else
+								{
+									<span>Edit</span>
+								}
+							</td>
+							<td>@item.Name</td>
+							<td>@item.Title</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	}
+</div>

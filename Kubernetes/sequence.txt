@@ -1,0 +1,18 @@
+kubectl apply -f mysql-configmap.yaml
+kubectl apply -f mysql-secret.yaml
+kubectl apply -f mysql-services.yaml
+kubectl apply -f mysql-statefulset.yaml
+kubectl apply -f webapp.yaml
+
+NGINX-ingress
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.41.2/deploy/static/provider/aws/deploy.yaml
+
+kubectl apply -f ingress.yaml
+
+In Linode:
+export KUBECONFIG=~/Downloads/test-kubeconfig.yaml
+helm repo add stable https://charts.helm.sh/stable
+helm install nginx-ingress stable/nginx-ingress --set controller.publishService.enabled=true
+
+To Test performance
+ab -k -c 350 -n 20000 http://dns-name-loadbalancer/

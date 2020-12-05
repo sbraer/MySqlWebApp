@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+data:
+  master.cnf: |
+    # Apply this config only on the master.
+    [mysqld]
+    log-bin
+  slave.cnf: |
+    # Apply this config only on slaves.
+    [mysqld]
+    super-read-only
+  Sql1-StructureUsers.sql: |
+    CREATE TABLE IF NOT EXISTS `AspNetUsers` (
+    `Id` varchar(255) NOT NULL,
+    `UserName` varchar(256) DEFAULT NULL,
+    `NormalizedUserName` varchar(256) DEFAULT NULL,
+    `Email` varchar(256) DEFAULT NULL,
+    `NormalizedEmail` varchar(256) DEFAULT NULL,
+    `PasswordHash` longtext,
+    PRIMARY KEY (`Id`),
+    UNIQUE KEY `UserNameIndex` (`NormalizedUserName`),
+    KEY `EmailIndex` (`NormalizedEmail`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    --
+    CREATE TABLE IF NOT EXISTS `AspNetRoles` (
+    `Id` varchar(255) NOT NULL,
+    `Name` varchar(256) DEFAULT NULL,
+    `NormalizedName` varchar(256) DEFAULT NULL,
+    PRIMARY KEY (`Id`),
+    UNIQUE KEY `RoleNameIndex` (`NormalizedName`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    --
+    CREATE TABLE IF NOT EXISTS `AspNetUserRoles` (
+    `UserId` varchar(255) NOT NULL,
+    `RoleId` varchar(255) NOT NULL,
+    PRIMARY KEY (`UserId`,`RoleId`),
+    KEY `IX_AspNetUserRoles_RoleId` (`RoleId`),
+    CONSTRAINT `FK_AspNetUserRoles_AspNetRoles_RoleId` FOREIGN KEY (`RoleId`) REFERENCES `AspNetRoles` (`Id`) ON DELETE CASCADE,
+    CONSTRAINT `FK_AspNetUserRoles_AspNetUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `AspNetUsers` (`Id`) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  Sql2-StructureArticles.sql: |
+    CREATE TABLE IF NOT EXISTS `Articles` (
+      `Id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+      `Name` varchar(50) NOT NULL,
+      `Title` varchar(50) NOT NULL,
+      `ArticleText` varchar(10000) NOT NULL,
+      PRIMARY KEY (`Id`),
+      UNIQUE KEY `Id_UNIQUE` (`Id`),
+      KEY `idx_Articles_Name` (`Name`),
+      KEY `idx_Articles_Title` (`Title`)
+      ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='Simple table to test articles request from aspnet core page';
+  Sql3-InsertDataUsers.sql: |
+    --
+    -- Dumping data for table `AspNetRoles`
+    --
+    LOCK TABLES `AspNetRoles` WRITE;
+    /*!40000 ALTER TABLE `AspNetRoles` DISABLE KEYS */;
+    REPLACE INTO `AspNetRoles` VALUES ('825533a0-7884-4acf-a504-dd4b593fb4bb','Admin','ADMIN'),('d7ec921d-799d-4450-9c56-f8c1457d2ef6','Users','USERS');
+    /*!40000 ALTER TABLE `AspNetRoles` ENABLE KEYS */;
+    UNLOCK TABLES;
+    --
+    -- Dumping data for table `AspNetUsers`
+    --
+    LOCK TABLES `AspNetUsers` WRITE;
+    /*!40000 ALTER TABLE `AspNetUsers` DISABLE KEYS */;
+    REPLACE INTO `AspNetUsers` VALUES ('1e0dbca8-6ac0-4b1e-931f-d2ffe4870700','a1@a1.it','A1@A1.IT','a1@a1.it','A1@A1.IT','AQAAAAEAACcQAAAAEHfduzIYVyurSl/vT6u+LuBWS6kvwYIVaeDPl+HT9rL8n7kAEoejTkgjZdTAqygf4g=='),('b92173cf-f3d7-45e1-8cd3-ccfa4ab26976','b1@b1.it','B1@B1.IT','b1@b1.it','B1@B1.IT','AQAAAAEAACcQAAAAEOn1vMSnbZMRiwVuqjLMeruoFoy9DIs67USuOaWOWxQAPFDLUfHRpNxQZDtCZsgv4w==');
+    /*!40000 ALTER TABLE `AspNetUsers` ENABLE KEYS */;
+    UNLOCK TABLES;
+    --
+    -- Dumping data for table `AspNetUserRoles`
+    --
+    LOCK TABLES `AspNetUserRoles` WRITE;
+    /*!40000 ALTER TABLE `AspNetUserRoles` DISABLE KEYS */;
+    REPLACE INTO `AspNetUserRoles` VALUES ('1e0dbca8-6ac0-4b1e-931f-d2ffe4870700','825533a0-7884-4acf-a504-dd4b593fb4bb'),('1e0dbca8-6ac0-4b1e-931f-d2ffe4870700','d7ec921d-799d-4450-9c56-f8c1457d2ef6'),('b92173cf-f3d7-45e1-8cd3-ccfa4ab26976','d7ec921d-799d-4450-9c56-f8c1457d2ef6');
+    /*!40000 ALTER TABLE `AspNetUserRoles` ENABLE KEYS */;
+    UNLOCK TABLES;
+  Sql4-InsertDataArticles.sql: |
+    LOCK TABLES `Articles` WRITE;
+    /*!40000 ALTER TABLE `Articles` DISABLE KEYS */;
+    REPLACE INTO `Articles` VALUES (1,'AZ','Hello World Article','In informatica Hello, world! (in italiano "Ciao, mondo!") è un semplice programma dimostrativo, frequentemente utilizzato nella didattica di base, che produce come risultato - output - la scritta "Hello, world!" o altre varianti, sfruttando i cosiddetti canali standard (standard output)[1]. Il programma non fa altro dunque che far comparire a schermo questa scritta e, per tradizione, diversi manuali di programmazione lo citano spesso per mostrarlo come primo esempio di lessico, sintassi e semantica basilare di un certo linguaggio di programmazione.\n\nLa scritta viene stampata a video dal primo programma di esempio scritto in C all''inizio del libro Il linguaggio C degli informatici Brian Kernighan e Dennis Ritchie. La versione corrente non è quella originale: all''inizio il testo era semplicemente "hello, world", senza maiuscola e punto esclamativo, che sono entrati nella tradizione solo in seguito.'),(2,'AZ','Medioevo','Il Medioevo (o Medio Evo) è una delle quattro età storiche (antica, medievale, moderna e contemporanea) in cui viene convenzionalmente suddivisa la storia dell''Europa nella storiografia moderna.\n\nIl Medioevo è costituito da un periodo di circa mille anni. Alcuni storici indicano come suo avvio la morte dell''imperatore romano Teodosio (395), l''ultimo a governare l''impero unito; altri indicano invece la caduta dell''Impero romano d''Occidente (476) Tradizionalmente, il Medioevo si conclude con la scoperta dell''America da parte di Cristoforo Colombo (1492), evento che sancisce l’inizio dell''Età moderna. Il Medioevo è poi solitamente suddiviso in Alto e Basso Medioevo (nei paesi di cultura anglosassone si usa spesso distinguere anche un pieno Medioevo, concetto solitamente non utilizzato in Italia[1]).\n\nIl concetto di Medioevo compare per la prima volta nel XV secolo, con i termini latini media aetas o media tempestas[2], con il significato di "età di mezzo", in ciò riflettendo l''opinione dei contemporanei, per cui tale periodo avrebbe rappresentato una deviazione dalla cultura classica, in opposizione al successivo Umanesimo e Rinascimento.\n\nAlcuni fenomeni tipici dei primi secoli, come il crollo demografico, la deurbanizzazione, il declino del potere centralizzato, le invasioni e le migrazioni di massa delle tribù, erano già iniziati nella tarda antichità. Come conseguenza delle invasioni barbariche del V secolo, in particolare di quelle dei vari popoli germanici, si vennero a formare nuovi regni nei territori che erano stati dell''Impero Romano d''Occidente. L''Impero Romano d''Oriente, invece, sopravvisse per tutta la durata del Medioevo, ed è generalmente oggi indicato con l''espressione "Impero bizantino"; nel VII secolo, però, l''Impero d''Oriente perse il Nord Africa e il Medio Oriente, passati sotto il dominio del Califfato degli Omayyadi, una dinastia islamica; ciò portò al fenomeno delle Crociate, durante le quali il mondo islamico e quello cristiano si scontrarono tra l''XI e il XIII secolo; la prima fu indetta nel 1095.');
+    /*!40000 ALTER TABLE `Articles` ENABLE KEYS */;
+    UNLOCK TABLES;

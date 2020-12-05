@@ -1,0 +1,58 @@
+﻿@page
+@model WebApp.Pages.RegisterModel
+
+@if (Model.ShowForm)
+{
+	<div class="row">
+		<div class="col-md-4">
+			<form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+				<h4>Create a new account.</h4>
+				<hr />
+				<div asp-validation-summary="All" class="text-danger"></div>
+				<div class="form-group">
+					<label asp-for="Username"></label>
+					<input asp-for="Username" class="form-control" />
+					<span asp-validation-for="Username" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="Password"></label>
+					<input asp-for="Password" class="form-control" />
+					<span asp-validation-for="Password" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="ConfirmPassword"></label>
+					<input asp-for="ConfirmPassword" class="form-control" />
+					<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+				</div>
+				<button type="submit" class="btn btn-primary">Register</button>
+			</form>
+		</div>
+		<div class="col-md-6 col-md-offset-2">
+			<section>
+				<h4>Users already created</h4>
+				<hr />
+				<div>
+					<p>a1@a1.it (password 123456) with role Administrator</p>
+					<p>b1@b1.it (password 123456) with role Users</p>
+				</div>
+			</section>
+		</div>
+	</div>
+}
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+	<h3>@Model.Message</h3>
+}
+@if (Model.ShowForm == false)
+{
+<div>
+	<span><a href="/">Home page</a></span>
+	<span><a href="/Login">Login page</a></span>
+</div>
+}
+else
+{
+	@section Scripts {
+		<partial name="_ValidationScriptsPartial" />
+	}
+}

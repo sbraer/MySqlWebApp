@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Sql1 - Structure Users.txt" />
+    <None Remove="Sql2 - Structure Articles.txt" />
+    <None Remove="Sql3 - Insert data users.txt" />
+    <None Remove="Sql4 - Insert data articles.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Sql1 - Structure Users.txt" />
+    <EmbeddedResource Include="Sql3 - Insert data users.txt" />
+    <EmbeddedResource Include="Sql2 - Structure Articles.txt" />
+    <EmbeddedResource Include="Sql4 - Insert data articles.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="dbup-mysql" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Configuration\Configuration.csproj" />
+  </ItemGroup>
+
+</Project>

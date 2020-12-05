@@ -1,0 +1,72 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "WebApp\WebApp.csproj", "{3A698121-FB1F-4950-9E1C-83EF539F6BBE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MySqlIdentityDal", "MySqlIdentityDal\MySqlIdentityDal.csproj", "{94465EA8-C6FB-4F58-A350-A535705EE036}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MySqlIdentityModel", "MySqlIdentityModel\MySqlIdentityModel.csproj", "{8928061B-E4C4-40E4-80C2-24B34411DFE4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbStructure", "DbStructure\DbStructure.csproj", "{E2462ADF-AB97-461F-B980-9E77C2C58BE8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration", "Configuration\Configuration.csproj", "{6064A45E-E22C-407C-B0D2-765CF12E9EC9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{DB2B25D9-2543-4B79-BC6D-2074953B7011}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extra", "Extra", "{4151B704-C9AE-4F98-8636-976B7D3DBDC0}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", "{D8E4B74D-6200-42A8-A06C-D38AB22A392C}"
+	ProjectSection(SolutionItems) = preProject
+		Kubernetes\ingress.yaml = Kubernetes\ingress.yaml
+		Kubernetes\mysql-configmap.yaml = Kubernetes\mysql-configmap.yaml
+		Kubernetes\mysql-secret.yaml = Kubernetes\mysql-secret.yaml
+		Kubernetes\mysql-services.yaml = Kubernetes\mysql-services.yaml
+		Kubernetes\mysql-statefulset.yaml = Kubernetes\mysql-statefulset.yaml
+		Kubernetes\sequence.txt = Kubernetes\sequence.txt
+		Kubernetes\webapp.yaml = Kubernetes\webapp.yaml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3A698121-FB1F-4950-9E1C-83EF539F6BBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A698121-FB1F-4950-9E1C-83EF539F6BBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A698121-FB1F-4950-9E1C-83EF539F6BBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A698121-FB1F-4950-9E1C-83EF539F6BBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94465EA8-C6FB-4F58-A350-A535705EE036}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94465EA8-C6FB-4F58-A350-A535705EE036}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94465EA8-C6FB-4F58-A350-A535705EE036}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94465EA8-C6FB-4F58-A350-A535705EE036}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8928061B-E4C4-40E4-80C2-24B34411DFE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8928061B-E4C4-40E4-80C2-24B34411DFE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8928061B-E4C4-40E4-80C2-24B34411DFE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8928061B-E4C4-40E4-80C2-24B34411DFE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2462ADF-AB97-461F-B980-9E77C2C58BE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2462ADF-AB97-461F-B980-9E77C2C58BE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2462ADF-AB97-461F-B980-9E77C2C58BE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2462ADF-AB97-461F-B980-9E77C2C58BE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6064A45E-E22C-407C-B0D2-765CF12E9EC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6064A45E-E22C-407C-B0D2-765CF12E9EC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6064A45E-E22C-407C-B0D2-765CF12E9EC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6064A45E-E22C-407C-B0D2-765CF12E9EC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB2B25D9-2543-4B79-BC6D-2074953B7011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB2B25D9-2543-4B79-BC6D-2074953B7011}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB2B25D9-2543-4B79-BC6D-2074953B7011}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB2B25D9-2543-4B79-BC6D-2074953B7011}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F498BD2E-64C0-4BF3-AA93-9B7C3057EA8B}
+	EndGlobalSection
+EndGlobal
