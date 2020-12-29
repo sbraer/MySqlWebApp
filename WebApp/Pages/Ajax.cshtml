@@ -1,0 +1,32 @@
+﻿@page
+@model WebApp.Pages.AjaxModel
+@{
+}
+<script type="text/javascript">
+	function getArticleList() {
+		fetch('/api/articles')
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					throw new Error('Something went wrong');
+				}
+			})
+			.then(data => alert(JSON.stringify(data)))
+			.catch(err => alert(">" + err));
+
+		return false;
+	}
+
+	function getFirstArticle() {
+		fetch('/api/articles/1')
+			.then(response => response.json())
+			.then(data => alert(JSON.stringify(data)));
+
+		return false;
+	}
+</script>
+<h1>Ajax page</h1>
+<p>This page is only for test ajax functionallity.</p>
+<p><a href="#" onclick="return getArticleList()">Get List</a></p>
+<p><a href="#" onclick="return getFirstArticle()">Get First article</a></p>

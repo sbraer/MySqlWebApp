@@ -1,6 +1,7 @@
 using Configuration;
 using DbStructure;
 using Entities;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MySqlIdentityDal;
 using MySqlIdentityModel;
+using System.Net;
+using System.Threading.Tasks;
 using WebApp.Services;
 
 namespace WebApp
@@ -44,6 +47,25 @@ namespace WebApp
 			})
 				.AddDefaultTokenProviders();
 
+			services.ConfigureApplicationCookie(config =>
+			{
+				config.Events = new CookieAuthenticationEvents
+				{
+					OnRedirectToLogin = ctx => {
+						if (ctx.Request.Path.StartsWithSegments("/api"))
+						{
+							ctx.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+						}
+						else
+						{
+							ctx.Response.Redirect(ctx.RedirectUri);
+						}
+
+						return Task.FromResult(0);
+					}
+				};
+			});
+
 			var _ConfigurationManager = new ConfigurationManager(Configuration);
 			services.AddSingleton<IConfigurationManager>(_ConfigurationManager);
 			services.AddSingleton<IUserStore<ApplicationUser>, UserStore>();
@@ -68,6 +90,7 @@ namespace WebApp
 			database.CreateUpdateDb();
 #endif
 			services.AddRazorPages();
+			services.AddControllers();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,7 +107,7 @@ namespace WebApp
 				app.UseHsts();
 			}
 
-			app.UseHttpsRedirection();
+			//app.UseHttpsRedirection();
 			app.UseStaticFiles();
 
 			app.UseAuthentication();
@@ -94,6 +117,7 @@ namespace WebApp
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapRazorPages();
+				endpoints.MapControllers();
 			});
 		}
 	}
