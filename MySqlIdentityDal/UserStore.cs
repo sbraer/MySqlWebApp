@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 using MySqlIdentityModel;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,7 +14,8 @@ namespace MySqlIdentityDal
 									IUserEmailStore<ApplicationUser>,
 									IUserPasswordStore<ApplicationUser>,
 									IUserLoginStore<ApplicationUser>,
-									IUserRoleStore<ApplicationUser>
+									IUserRoleStore<ApplicationUser>,
+                                    IUserClaimStore<ApplicationUser>
 	{
         private readonly string _connectionReaderString = null!;
         private readonly string _connectionWriterString = null!;
@@ -525,6 +527,31 @@ namespace MySqlIdentityDal
             {
                 throw new ArgumentException("Userid or Roleid is wrong");
             }
+        }
+
+        public Task<IList<Claim>> GetClaimsAsync(ApplicationUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult((IList<Claim>)new List<Claim>());
+        }
+
+        public Task AddClaimsAsync(ApplicationUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task ReplaceClaimAsync(ApplicationUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task RemoveClaimsAsync(ApplicationUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task<IList<ApplicationUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+        {
+            return Task.FromResult((IList<ApplicationUser>)new List<ApplicationUser>());
         }
     }
 }

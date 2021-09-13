@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -46,6 +48,7 @@ namespace WebApp.Pages
 					if (result.Succeeded)
 					{
 						await CheckRole(user);
+						await CheckClaims(user);
 						Message = "User created";
 						ShowForm = false;
 					}
@@ -67,7 +70,24 @@ namespace WebApp.Pages
 			return Page();
 		}
 
-		private async Task CheckRole(ApplicationUser user)
+		private async Task CheckClaims(ApplicationUser user)
+		{
+			if (user.UserName == "a3@a3.it")
+			{
+				var test1 = new List<Claim>()
+				{
+					new Claim(ClaimTypes.Name, "a3"),
+					new Claim(ClaimTypes.Email, "a3@a3.it"),
+					new Claim(ClaimTypes.DateOfBirth, "01/01/2000"),
+				};
+
+				await _userManager.AddClaimsAsync(user, test1);
+			}
+
+			await Task.CompletedTask;
+		}
+
+        private async Task CheckRole(ApplicationUser user)
 		{
 			if (user.UserName == "a1@a1.it")
 			{
