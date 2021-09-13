@@ -9,9 +9,11 @@
     <None Remove="Sql2 - Structure Articles.txt" />
     <None Remove="Sql3 - Insert data users.txt" />
     <None Remove="Sql4 - Insert data articles.txt" />
+    <None Remove="Sql6 - Structure Claims.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Sql6 - Structure Claims.txt" />
     <EmbeddedResource Include="Sql1 - Structure Users.txt" />
     <EmbeddedResource Include="Sql3 - Insert data users.txt" />
     <EmbeddedResource Include="Sql2 - Structure Articles.txt" />
