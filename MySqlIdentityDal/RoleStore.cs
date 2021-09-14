@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using MySql.Data.MySqlClient;
 using MySqlIdentityModel;
 using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MySqlIdentityDal
 {
-	public class RoleStore : IRoleStore<ApplicationRole>
+	public class RoleStore : IRoleStore<ApplicationRole>, IRoleClaimStore<ApplicationRole>
 	{
 		private readonly string _connectionReaderString = null!;
 		private readonly string _connectionWriterString = null!;
@@ -199,6 +201,84 @@ namespace MySqlIdentityDal
 			else
 			{
 				return IdentityResult.Success;
+			}
+		}
+
+		public async Task<IList<Claim>> GetClaimsAsync(ApplicationRole role, CancellationToken cancellationToken = default)
+		{
+			using var conn = new MySqlConnection(_connectionReaderString);
+			await conn.OpenAsync(cancellationToken);
+
+			using var comm = new MySqlCommand("SELECT uc.ClaimType, uc.ClaimValue FROM AspNetRoles u inner join AspNetRoleClaims uc on u.Name = uc.RoleId where u.NormalizedName = @rolename");
+			comm.Parameters.Add(new MySqlParameter("@rolename", MySqlDbType.VarChar, 256)
+			{
+				Value = role.NormalizedName != null ? role.NormalizedName : role.Name.ToUpper()
+			});
+
+			using var re = await comm.ExecuteReaderAsync(cancellationToken);
+
+			var coll = new List<Claim>();
+			while (await re.ReadAsync(cancellationToken))
+			{
+				coll.Add(new Claim(re.GetString(0), re.GetString(1)));
+			}
+
+			return coll;
+		}
+
+		public async Task AddClaimAsync(ApplicationRole role, Claim claim, CancellationToken cancellationToken = default)
+		{
+			using var conn = new MySqlConnection(_connectionWriterString);
+			await conn.OpenAsync(cancellationToken);
+
+			using var comm = new MySqlCommand("insert into AspNetRoleClaims(RoleId, ClaimType, ClaimValue) values(@roleid, @claimtype, @claimvalue)");
+			comm.Parameters.AddRange(new MySqlParameter[] {
+				new MySqlParameter("@roleid", MySqlDbType.VarChar, 256)
+				{
+					Value = role.NormalizedName != null ? role.NormalizedName : role.Name.ToUpper()
+				},
+				new MySqlParameter("@claimtype", MySqlDbType.LongText)
+				{
+					Value = claim.Type
+				},
+				new MySqlParameter("@claimvalue", MySqlDbType.LongText)
+				{
+					Value = claim.Value
+				}
+			});
+
+			int result = await comm.ExecuteNonQueryAsync();
+			if (result != 1)
+			{
+				throw new ArgumentException("Error in insert operation in claims role table");
+			}
+		}
+
+		public async Task RemoveClaimAsync(ApplicationRole role, Claim claim, CancellationToken cancellationToken = default)
+		{
+			using var conn = new MySqlConnection(_connectionWriterString);
+			await conn.OpenAsync(cancellationToken);
+
+			using var comm = new MySqlCommand("delete from AspNetRoleClaims where RoleId = @roleid and ClaimType = @claimtype and ClaimValue = @claimvalue)");
+			comm.Parameters.AddRange(new MySqlParameter[] {
+				new MySqlParameter("@roleid", MySqlDbType.VarChar, 256)
+				{
+					Value = role.NormalizedName != null ? role.NormalizedName : role.Name.ToUpper()
+				},
+				new MySqlParameter("@claimtype", MySqlDbType.LongText)
+				{
+					Value = claim.Type
+				},
+				new MySqlParameter("@claimvalue", MySqlDbType.LongText)
+				{
+					Value = claim.Value
+				}
+			});
+
+			int result = await comm.ExecuteNonQueryAsync();
+			if (result != 1)
+			{
+				throw new ArgumentException("Error in delete claims");
 			}
 		}
 	}

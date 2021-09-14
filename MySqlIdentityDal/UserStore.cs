@@ -529,29 +529,176 @@ namespace MySqlIdentityDal
             }
         }
 
-        public Task<IList<Claim>> GetClaimsAsync(ApplicationUser user, CancellationToken cancellationToken)
+        public async Task<IList<Claim>> GetClaimsAsync(ApplicationUser user, CancellationToken cancellationToken)
         {
-            return Task.FromResult((IList<Claim>)new List<Claim>());
+            using var conn = new MySqlConnection(_connectionReaderString);
+            await conn.OpenAsync(cancellationToken);
+
+            using var comm = new MySqlCommand("SELECT uc.ClaimType, uc.ClaimValue FROM AspNetUsers u inner join AspNetUserClaims uc on u.UserName = uc.UserId where u.NormalizedUserName = @username");
+            comm.Parameters.Add(new MySqlParameter("@username", MySqlDbType.VarChar, 256)
+            {
+                Value = user.NormalizedUserName != null ? user.NormalizedUserName : user.UserName.ToUpper()
+            });
+
+            using var re = await comm.ExecuteReaderAsync(cancellationToken);
+
+            var coll = new List<Claim>();
+            while (await re.ReadAsync(cancellationToken))
+            {
+                coll.Add(new Claim(re.GetString(0), re.GetString(1)));
+            }
+
+            return coll;
         }
 
-        public Task AddClaimsAsync(ApplicationUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        public async Task AddClaimsAsync(ApplicationUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            using var conn = new MySqlConnection(_connectionWriterString);
+            await conn.OpenAsync(cancellationToken);
+
+            using var comm = new MySqlCommand("insert into AspNetUserClaims(UserId, ClaimType, ClaimValue) values(@userid, @claimtype, @claimvalue)");
+            comm.Parameters.AddRange(new MySqlParameter[] {
+                new MySqlParameter("@userid", MySqlDbType.VarChar, 256)
+                {
+                    Value = user.NormalizedUserName != null ? user.NormalizedUserName : user.UserName.ToUpper()
+                },
+                new MySqlParameter("@claimtype", MySqlDbType.LongText),
+                new MySqlParameter("@claimvalue", MySqlDbType.LongText)
+            });
+
+            using MySqlTransaction transaction = conn.BeginTransaction();
+
+            try
+            {
+                foreach (var claim in claims)
+                {
+                    comm.Parameters[1].Value = claim.Type;
+                    comm.Parameters[2].Value = claim.Value;
+
+                    int result = await comm.ExecuteNonQueryAsync();
+                    if (result != 1)
+					{
+                        throw new ArgumentException("Error in insert operation in claims table");
+                    }
+                }
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+			{
+                await transaction.RollbackAsync();
+                throw new ArgumentException(ex.Message);
+            }
         }
 
-        public Task ReplaceClaimAsync(ApplicationUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+        public async Task ReplaceClaimAsync(ApplicationUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            using var conn = new MySqlConnection(_connectionWriterString);
+            await conn.OpenAsync(cancellationToken);
+
+            using var comm = new MySqlCommand("update AspNetUserClaims set ClaimType = @newClaimType, ClaimValue = @newClaimValue where UserId = @userid and ClaimType = @oldclaimtype and ClaimValue = @oldclaimValue");
+            comm.Parameters.AddRange(new MySqlParameter[] {
+                new MySqlParameter("@userid", MySqlDbType.VarChar, 256)
+                {
+                    Value = user.NormalizedUserName != null ? user.NormalizedUserName : user.UserName.ToUpper()
+                },
+                new MySqlParameter("@oldclaimtype", MySqlDbType.LongText)
+                {
+                    Value = claim.Type
+                },
+                new MySqlParameter("@oldclaimvalue", MySqlDbType.LongText)
+                {
+                    Value = claim.Value
+                },
+                new MySqlParameter("@newclaimtype", MySqlDbType.LongText)
+                {
+                    Value = newClaim.Type
+                },
+                new MySqlParameter("@newclaimvalue", MySqlDbType.LongText)
+                {
+                    Value = newClaim.Value
+                }
+            });
+
+            int values = await comm.ExecuteNonQueryAsync(cancellationToken);
+            if (values != 1)
+            {
+                throw new ArgumentException("error in update claim table");
+            }
         }
 
-        public Task RemoveClaimsAsync(ApplicationUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        public async Task RemoveClaimsAsync(ApplicationUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            using var conn = new MySqlConnection(_connectionWriterString);
+            await conn.OpenAsync(cancellationToken);
+
+            using var comm = new MySqlCommand("delete from AspNetUserClaims where UserId = @userid and ClaimType = @claimtype and ClaimValue = @claimvalue)");
+            comm.Parameters.AddRange(new MySqlParameter[] {
+                new MySqlParameter("@userid", MySqlDbType.VarChar, 256)
+                {
+                    Value = user.NormalizedUserName != null ? user.NormalizedUserName : user.UserName.ToUpper()
+                },
+                new MySqlParameter("@claimtype", MySqlDbType.LongText),
+                new MySqlParameter("@claimvalue", MySqlDbType.LongText)
+            });
+
+            using MySqlTransaction transaction = conn.BeginTransaction();
+
+            try
+            {
+                foreach (var claim in claims)
+                {
+                    comm.Parameters[1].Value = claim.Type;
+                    comm.Parameters[2].Value = claim.Value;
+
+                    int result = await comm.ExecuteNonQueryAsync();
+                    if (result != 1)
+                    {
+                        throw new ArgumentException("Error in delete claims");
+                    }
+                }
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new ArgumentException(ex.Message);
+            }
         }
 
-        public Task<IList<ApplicationUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+        public async Task<IList<ApplicationUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
         {
-            return Task.FromResult((IList<ApplicationUser>)new List<ApplicationUser>());
+            using var conn = new MySqlConnection(_connectionReaderString);
+            await conn.OpenAsync(cancellationToken);
+
+            using var comm = new MySqlCommand("select u.Id,u.UserName,u.NormalizedUserName,u.Email,u.NormalizedEmail,u.PasswordHash from AspNetUsers u inner join AspNetUserClaims uc on uc.UserId = u.NormalizedUserName where uc.ClaimType = @claimtype and uc.ClaimValue = @claimvalue");
+            comm.Parameters.Add(new MySqlParameter("@claimtype", MySqlDbType.LongText)
+            {
+                Value = claim.Type
+            });
+            comm.Parameters.Add(new MySqlParameter("@claimvalue", MySqlDbType.LongText)
+            {
+                Value = claim.Value
+            });
+
+            using var re = await comm.ExecuteReaderAsync(cancellationToken);
+
+            var coll = new List<ApplicationUser>();
+            while (await re.ReadAsync(cancellationToken))
+            {
+                coll.Add(new ApplicationUser
+                {
+                    Id = re.GetString(0),
+                    UserName = re.GetString(1),
+                    NormalizedUserName = re.GetString(2),
+                    Email = re.GetString(3),
+                    NormalizedEmail = re.GetString(4),
+                    PasswordHash = re.GetString(5)
+                });
+            }
+
+            return coll;
         }
     }
 }
