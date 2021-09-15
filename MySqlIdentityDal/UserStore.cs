@@ -502,7 +502,7 @@ namespace MySqlIdentityDal
             using var conn = new MySqlConnection(_connectionWriterString);
             await conn.OpenAsync(cancellationToken);
 
-            using var comm1 = new MySqlCommand("select Id from AspNetRoles where Name=@rolename or NormalizedName=@rolename;");
+            using var comm1 = new MySqlCommand("select Id from AspNetRoles where Name=@rolename or NormalizedName=@rolename;", conn);
             comm1.Parameters.Add(new MySqlParameter("@rolename", MySqlDbType.VarChar, 256)
             {
                 Value = roleName
@@ -510,7 +510,7 @@ namespace MySqlIdentityDal
 
             string roleId = (await comm1.ExecuteScalarAsync(cancellationToken)).ToString();
 
-            using var comm2 = new MySqlCommand("delete from AspNetUserRoles where UserId=@userid and RoleId=@roleid;");
+            using var comm2 = new MySqlCommand("delete from AspNetUserRoles where UserId=@userid and RoleId=@roleid;", conn);
             comm2.Parameters.AddRange(new MySqlParameter[] {
                     new MySqlParameter("@userid", MySqlDbType.VarChar,256)
                     {
@@ -534,10 +534,10 @@ namespace MySqlIdentityDal
             using var conn = new MySqlConnection(_connectionReaderString);
             await conn.OpenAsync(cancellationToken);
 
-            using var comm = new MySqlCommand("SELECT uc.ClaimType, uc.ClaimValue FROM AspNetUsers u inner join AspNetUserClaims uc on u.UserName = uc.UserId where u.NormalizedUserName = @username");
+            using var comm = new MySqlCommand("SELECT uc.ClaimType, uc.ClaimValue FROM AspNetUsers u inner join AspNetUserClaims uc on u.Id = uc.UserId where u.Id = @username", conn);
             comm.Parameters.Add(new MySqlParameter("@username", MySqlDbType.VarChar, 256)
             {
-                Value = user.NormalizedUserName != null ? user.NormalizedUserName : user.UserName.ToUpper()
+                Value = user.Id
             });
 
             using var re = await comm.ExecuteReaderAsync(cancellationToken);
@@ -556,11 +556,11 @@ namespace MySqlIdentityDal
             using var conn = new MySqlConnection(_connectionWriterString);
             await conn.OpenAsync(cancellationToken);
 
-            using var comm = new MySqlCommand("insert into AspNetUserClaims(UserId, ClaimType, ClaimValue) values(@userid, @claimtype, @claimvalue)");
+            using var comm = new MySqlCommand("insert into AspNetUserClaims(UserId, ClaimType, ClaimValue) values(@userid, @claimtype, @claimvalue)", conn);
             comm.Parameters.AddRange(new MySqlParameter[] {
                 new MySqlParameter("@userid", MySqlDbType.VarChar, 256)
                 {
-                    Value = user.NormalizedUserName != null ? user.NormalizedUserName : user.UserName.ToUpper()
+                    Value = user.Id
                 },
                 new MySqlParameter("@claimtype", MySqlDbType.LongText),
                 new MySqlParameter("@claimvalue", MySqlDbType.LongText)
@@ -596,11 +596,11 @@ namespace MySqlIdentityDal
             using var conn = new MySqlConnection(_connectionWriterString);
             await conn.OpenAsync(cancellationToken);
 
-            using var comm = new MySqlCommand("update AspNetUserClaims set ClaimType = @newClaimType, ClaimValue = @newClaimValue where UserId = @userid and ClaimType = @oldclaimtype and ClaimValue = @oldclaimValue");
+            using var comm = new MySqlCommand("update AspNetUserClaims set ClaimType = @newClaimType, ClaimValue = @newClaimValue where Id = @userid and ClaimType = @oldclaimtype and ClaimValue = @oldclaimValue", conn);
             comm.Parameters.AddRange(new MySqlParameter[] {
                 new MySqlParameter("@userid", MySqlDbType.VarChar, 256)
                 {
-                    Value = user.NormalizedUserName != null ? user.NormalizedUserName : user.UserName.ToUpper()
+                    Value = user.Id
                 },
                 new MySqlParameter("@oldclaimtype", MySqlDbType.LongText)
                 {
@@ -632,11 +632,11 @@ namespace MySqlIdentityDal
             using var conn = new MySqlConnection(_connectionWriterString);
             await conn.OpenAsync(cancellationToken);
 
-            using var comm = new MySqlCommand("delete from AspNetUserClaims where UserId = @userid and ClaimType = @claimtype and ClaimValue = @claimvalue)");
+            using var comm = new MySqlCommand("delete from AspNetUserClaims where Id = @userid and ClaimType = @claimtype and ClaimValue = @claimvalue)", conn);
             comm.Parameters.AddRange(new MySqlParameter[] {
                 new MySqlParameter("@userid", MySqlDbType.VarChar, 256)
                 {
-                    Value = user.NormalizedUserName != null ? user.NormalizedUserName : user.UserName.ToUpper()
+                    Value = user.Id
                 },
                 new MySqlParameter("@claimtype", MySqlDbType.LongText),
                 new MySqlParameter("@claimvalue", MySqlDbType.LongText)
@@ -672,7 +672,7 @@ namespace MySqlIdentityDal
             using var conn = new MySqlConnection(_connectionReaderString);
             await conn.OpenAsync(cancellationToken);
 
-            using var comm = new MySqlCommand("select u.Id,u.UserName,u.NormalizedUserName,u.Email,u.NormalizedEmail,u.PasswordHash from AspNetUsers u inner join AspNetUserClaims uc on uc.UserId = u.NormalizedUserName where uc.ClaimType = @claimtype and uc.ClaimValue = @claimvalue");
+            using var comm = new MySqlCommand("select u.Id,u.UserName,u.NormalizedUserName,u.Email,u.NormalizedEmail,u.PasswordHash from AspNetUsers u inner join AspNetUserClaims uc on uc.UserId = u.Id where uc.ClaimType = @claimtype and uc.ClaimValue = @claimvalue", conn);
             comm.Parameters.Add(new MySqlParameter("@claimtype", MySqlDbType.LongText)
             {
                 Value = claim.Type

@@ -21,6 +21,20 @@ namespace WebApp.Pages
 
 		public void OnGet()
 		{
+			if (User.Identity.IsAuthenticated)
+            {
+				ClaimInfo = string.Empty;
+				User.Claims.ToList().ForEach(t =>
+				{
+					ClaimInfo += $"{t.Type}: {t.Value}<br />";
+				});
+            }
+			else
+            {
+				ClaimInfo = string.Empty;
+            }
 		}
+
+		public string ClaimInfo {  get; set; }
 	}
 }

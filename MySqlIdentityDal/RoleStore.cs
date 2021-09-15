@@ -209,10 +209,10 @@ namespace MySqlIdentityDal
 			using var conn = new MySqlConnection(_connectionReaderString);
 			await conn.OpenAsync(cancellationToken);
 
-			using var comm = new MySqlCommand("SELECT uc.ClaimType, uc.ClaimValue FROM AspNetRoles u inner join AspNetRoleClaims uc on u.Name = uc.RoleId where u.NormalizedName = @rolename");
+			using var comm = new MySqlCommand("SELECT uc.ClaimType, uc.ClaimValue FROM AspNetRoles u inner join AspNetRoleClaims uc on u.Name = uc.RoleId where u.NormalizedName = @rolename", conn);
 			comm.Parameters.Add(new MySqlParameter("@rolename", MySqlDbType.VarChar, 256)
 			{
-				Value = role.NormalizedName != null ? role.NormalizedName : role.Name.ToUpper()
+				Value = role.Id
 			});
 
 			using var re = await comm.ExecuteReaderAsync(cancellationToken);
@@ -231,11 +231,11 @@ namespace MySqlIdentityDal
 			using var conn = new MySqlConnection(_connectionWriterString);
 			await conn.OpenAsync(cancellationToken);
 
-			using var comm = new MySqlCommand("insert into AspNetRoleClaims(RoleId, ClaimType, ClaimValue) values(@roleid, @claimtype, @claimvalue)");
+			using var comm = new MySqlCommand("insert into AspNetRoleClaims(RoleId, ClaimType, ClaimValue) values(@roleid, @claimtype, @claimvalue)", conn);
 			comm.Parameters.AddRange(new MySqlParameter[] {
 				new MySqlParameter("@roleid", MySqlDbType.VarChar, 256)
 				{
-					Value = role.NormalizedName != null ? role.NormalizedName : role.Name.ToUpper()
+					Value = role.Id
 				},
 				new MySqlParameter("@claimtype", MySqlDbType.LongText)
 				{
@@ -259,11 +259,11 @@ namespace MySqlIdentityDal
 			using var conn = new MySqlConnection(_connectionWriterString);
 			await conn.OpenAsync(cancellationToken);
 
-			using var comm = new MySqlCommand("delete from AspNetRoleClaims where RoleId = @roleid and ClaimType = @claimtype and ClaimValue = @claimvalue)");
+			using var comm = new MySqlCommand("delete from AspNetRoleClaims where RoleId = @roleid and ClaimType = @claimtype and ClaimValue = @claimvalue)", conn);
 			comm.Parameters.AddRange(new MySqlParameter[] {
 				new MySqlParameter("@roleid", MySqlDbType.VarChar, 256)
 				{
-					Value = role.NormalizedName != null ? role.NormalizedName : role.Name.ToUpper()
+					Value = role.Id
 				},
 				new MySqlParameter("@claimtype", MySqlDbType.LongText)
 				{
