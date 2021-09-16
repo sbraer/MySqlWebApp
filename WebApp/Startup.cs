@@ -1,6 +1,7 @@
 using Configuration;
 using DbStructure;
 using Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MySqlIdentityDal;
 using MySqlIdentityModel;
+using WebApp.CustomPolicyProvider;
 using WebApp.Services;
 
 namespace WebApp
@@ -50,6 +52,10 @@ namespace WebApp
 			services.AddSingleton<IRoleStore<ApplicationRole>, RoleStore>();
 			services.AddSingleton<IArticleStore, ArticleStore>();
 			services.AddSingleton<IInitializeDatabase, InitializeDatabase>();
+
+			// Custom policy
+			services.AddSingleton<IAuthorizationPolicyProvider, CustomAuthorizationPolicyProvider>();
+			services.AddScoped<IAuthorizationHandler, SecurityLevelHandler>();
 
 			// Add application services.
 			services.AddTransient<IEmailSender, EmailSender>();

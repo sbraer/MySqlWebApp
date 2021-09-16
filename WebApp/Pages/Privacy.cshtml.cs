@@ -6,10 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApp.CustomPolicyProvider;
 
 namespace WebApp.Pages
 {
-	[Authorize]
+	//[Authorize]
+	[SecurityLevel(90)]
 	public class PrivacyModel : PageModel
 	{
 		private readonly ILogger<PrivacyModel> _logger;

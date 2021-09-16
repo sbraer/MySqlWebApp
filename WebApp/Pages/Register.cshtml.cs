@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySqlIdentityModel;
+using WebApp.CustomPolicyProvider;
 
 namespace WebApp.Pages
 {
@@ -79,6 +80,7 @@ namespace WebApp.Pages
 					new Claim(ClaimTypes.Name, "a3"),
 					new Claim(ClaimTypes.Email, "a3@a3.it"),
 					new Claim(ClaimTypes.DateOfBirth, "01/01/2000"),
+					new Claim(DynamicPolicies.SecurityLevel, "100"),
 				};
 
 				await _userManager.AddClaimsAsync(user, test1);
