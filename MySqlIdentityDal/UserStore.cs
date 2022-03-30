@@ -219,10 +219,10 @@ namespace MySqlIdentityDal
             return Task.FromResult(user.NormalizedUserName);
         }
 
-        public async Task SetEmailAsync(ApplicationUser user, string email, CancellationToken cancellationToken)
+        public Task SetEmailAsync(ApplicationUser user, string email, CancellationToken cancellationToken)
         {
-            await Task.Yield();
             user.Email = email;
+            return Task.CompletedTask;
         }
 
         public Task<string> GetEmailAsync(ApplicationUser user, CancellationToken cancellationToken)
@@ -272,10 +272,10 @@ namespace MySqlIdentityDal
             return Task.FromResult(user.NormalizedEmail);
         }
 
-        public async Task SetNormalizedEmailAsync(ApplicationUser user, string normalizedEmail, CancellationToken cancellationToken)
+        public Task SetNormalizedEmailAsync(ApplicationUser user, string normalizedEmail, CancellationToken cancellationToken)
         {
-            await Task.Yield();
             user.NormalizedEmail = normalizedEmail;
+            return Task.CompletedTask;
         }
 
         public Task<string> GetPasswordHashAsync(ApplicationUser user, CancellationToken cancellationToken)
@@ -288,22 +288,22 @@ namespace MySqlIdentityDal
             return Task.FromResult(user.PasswordHash != null);
         }
 
-        public async Task SetUserNameAsync(ApplicationUser user, string userName, CancellationToken cancellationToken)
+        public Task SetUserNameAsync(ApplicationUser user, string userName, CancellationToken cancellationToken)
         {
-            await Task.Yield();
             user.UserName = userName;
+            return Task.CompletedTask;
         }
 
-        public async Task SetNormalizedUserNameAsync(ApplicationUser user, string normalizedName, CancellationToken cancellationToken)
+        public Task SetNormalizedUserNameAsync(ApplicationUser user, string normalizedName, CancellationToken cancellationToken)
         {
-            await Task.Yield();
             user.NormalizedUserName = normalizedName;
+            return Task.CompletedTask;
         }
 
-        public async Task SetPasswordHashAsync(ApplicationUser user, string passwordHash, CancellationToken cancellationToken)
+        public Task SetPasswordHashAsync(ApplicationUser user, string passwordHash, CancellationToken cancellationToken)
         {
-            await Task.Yield();
             user.PasswordHash = passwordHash;
+            return Task.CompletedTask;
         }
 
         public Task<string> GetPhoneNumberAsync(ApplicationUser user, CancellationToken cancellationToken)

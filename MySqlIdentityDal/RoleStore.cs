@@ -155,16 +155,16 @@ namespace MySqlIdentityDal
 			return Task.FromResult(role.Name);
 		}
 
-		public async Task SetNormalizedRoleNameAsync(ApplicationRole role, string normalizedName, CancellationToken cancellationToken)
+		public Task SetNormalizedRoleNameAsync(ApplicationRole role, string normalizedName, CancellationToken cancellationToken)
 		{
-			await Task.Yield();
 			role.NormalizedName = normalizedName;
+			return Task.CompletedTask;
 		}
 
-		public async Task SetRoleNameAsync(ApplicationRole role, string roleName, CancellationToken cancellationToken)
+		public Task SetRoleNameAsync(ApplicationRole role, string roleName, CancellationToken cancellationToken)
 		{
-			await Task.Yield();
 			role.Name = roleName;
+			return Task.CompletedTask;
 		}
 
 		public async Task<IdentityResult> UpdateAsync(ApplicationRole role, CancellationToken cancellationToken)
